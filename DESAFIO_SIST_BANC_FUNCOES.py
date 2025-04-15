@@ -6,8 +6,8 @@ def menu():
     [s] Saque 
     [e] Extrato
     [nc] Nova conta
-    [lc] Listar contas
     [nu] Novo usuário
+    [lc] Listar contas
     [q] Sair 
     -->> """
     return input(menu)
@@ -24,7 +24,7 @@ def depositar(saldo, valor, extrato, /):
 def saque(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
     excedeu_saldo = valor > saldo
     excedeu_limite = valor > limite
-    excedeu_numero_saques = numero_saques >= LIMITE_SAQUES
+    excedeu_numero_saques = numero_saques >= limite_saques
     if excedeu_saldo:
         print("Falha na operação! Saldo insuficiente.")
     elif excedeu_limite:
@@ -60,7 +60,7 @@ def cria_usuario (usuarios):
     print("Usuário cadastrado com sucesso!\n")
 
 def filtro_usuario (cpf, usuarios):
-    usuarios_filtrados = [usuario for usuario in usuarios if usuario ["cpf"] = cpf]
+    usuarios_filtrados = [usuario for usuario in usuarios if usuario ["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
 
 def criar_conta (agencia, numero_conta, usuarios):
@@ -71,3 +71,72 @@ def criar_conta (agencia, numero_conta, usuarios):
         print("Conta criada com sucesso!")
         return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
     print("\nUsuário não encontrado. Encerrando a sessão.")
+
+def listar_contas (contas):
+    for conta in contas:
+        linha = f"Agência:\t{conta['agencia']} \n\tC/C:\t{conta['numero_conta']}\n\tTitular:\t{conta['usuario']['nome']}"
+        print("=" * 100)
+
+
+def main():
+    LIMITE_SAQUES = 3 
+    AGENCIA = "0001"
+    saldo = 0
+    limite = 500
+    extrato = ""
+    numero_saques= 0
+    usuarios = []
+    contas = []
+
+    while True:
+        opcao = menu ()
+
+        if opcao == "d":
+            valor = float(input("Informe o valor do depósito: "))
+
+            saldo, extrato = depositar(saldo, valor, extrato)
+
+        elif opcao == "s":
+            valor = float(input("Informe o valor do saque: "))
+
+            saldo, extrato = saque(
+                saldo = saldo,
+                valor = valor,
+                extrato= extrato,
+                limite = limite,
+                numero_saques = numero_saques,
+                limite_saques =LIMITE_SAQUES,
+            )
+        
+        elif opcao == "e":
+            exibir_extrato(saldo, extrato=extrato)
+        
+        elif opcao == "nu":
+            cria_usuario(usuarios)
+        
+        elif opcao == "nc":
+            numero_conta = len(contas)+ 1
+            conta = criar_conta(AGENCIA, numero_conta, usuarios)
+            if conta:
+                contas.append(conta)
+        
+        elif opcao == "lc":
+            listar_contas(contas)
+        
+        elif opcao == "q":
+            break
+
+main()
+
+        
+
+
+
+
+
+
+
+
+
+    
+    
